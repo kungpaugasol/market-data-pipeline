@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: dev_dawson
+          POSTGRES_PASSWORD: ci_password
+          POSTGRES_DB: market_data
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        run: uv sync --all-extras
+
+      - name: Lint with ruff
+        run: uv run ruff check .
+
+      - name: Check formatting with black
+        run: uv run black --check .
+
+      - name: Run unit tests
+        run: uv run pytest tests/
+
+       - name: dbt compile
+        working-directory: transforms/market_data_dbt
+        env:
+          DBT_USER: dev_dawson
+          DBT_PASSWORD: ci_password
+          DBT_PROFILES_DIR: ci
+        run: |
+          uv run dbt deps
+          uv run dbt debug
+          uv run dbt compile

@@ -1,0 +1,12 @@
+market_data_dbt:
+  target: ci
+  outputs:
+    ci:
+      type: postgres
+      host: localhost
+      user: "{{ env_var('DBT_USER') }}"
+      password: "{{ env_var('DBT_PASSWORD') }}"
+      port: 5432
+      dbname: market_data
+      schema: ci
+      threads: 4
