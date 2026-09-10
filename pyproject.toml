@@ -7,8 +7,18 @@ authors = [
 ]
 requires-python = ">=3.12"
 dependencies = [
+    "datetime>=6.0",
     "dbt-core>=1.12.4",
     "dbt-postgres>=1.11.0",
+    "logging>=0.4.9.6",
+    "pandas>=3.0.5",
+    "pandera>=0.33.1",
+    "pathlib>=1.0.1",
+    "pyarrow>=25.0.1",
+    "python-dotenv>=1.2.3",
+    "tenacity>=9.1.4",
+    "uuid>=1.30",
+    "yfinance>=1.7.0",
 ]
 
 [project.scripts]
